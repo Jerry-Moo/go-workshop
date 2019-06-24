@@ -1,5 +1,10 @@
 package pool
 
+/*
+  多路复用 在对于有 io等待的情况下 非常实用 比如time.Sleep
+  对于计算量大的情况下  多路复用workshop性能不会有什么提升
+*/
+
 import (
 	"sync"
 	"testing"
@@ -29,7 +34,13 @@ type testWorker struct{ int }
 func newTestWorker() (Worker, error) { return &testWorker{}, nil }
 func (t *testWorker) Health() bool   { return true }
 func (t *testWorker) Close() error   { return nil }
-func (t *testWorker) Do()            { time.Sleep(oneLogicCostTime) }
+func (t *testWorker) Do() {
+	// time.Sleep(oneLogicCostTime)
+	total := 0
+	for i := 0; i <= 10000000; i++ {
+		total += i
+	}
+}
 
 func reportStat(t *testing.T, startNano int64) {
 	totalNano := time.Now().UnixNano() - startNano
